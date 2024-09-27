@@ -7,6 +7,9 @@ void baseControl();
 void baseStopControl();
 void intakerControl();
 
+// a function to control the new motor
+void newMotorControl();
+
 // main function
 void userControl();
 

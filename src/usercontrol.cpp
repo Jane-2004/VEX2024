@@ -60,6 +60,17 @@ void intakerControl() {
     }
 }
 
+void newMotorControl() {
+    const double motor_volt = 2000;
+    if (press_A) {
+        motor_new.spin(directionType::fwd, motor_volt, voltageUnits::mV);
+    } else if (press_B) {
+        motor_new.spin(directionType::rev, motor_volt, voltageUnits::mV);
+    } else {
+        motor_new.spin(directionType::fwd, 0, voltageUnits::mV);
+    }
+}
+
 void userControl() {
     modeDisplay('U');
     vex::thread *T = nullptr;
@@ -89,6 +100,7 @@ void userControl() {
 
             // 其余组件控制
             intakerControl();
+            newMotorControl();
         }
 
         this_thread::sleep_for(kRefreshTime);

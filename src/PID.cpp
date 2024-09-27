@@ -51,8 +51,28 @@ double PID::getOutput() { return output; }
 
 void PID::update(double input) {
     error_curt = target - input;  // calculate current error
-    //TODO: calculate the contribution of P, I, D with kp, ki, kd
+    
+    if (first_time) { // refresh error_prev and error_int for the first time
+        first_time = false;
+        error_prev = error_curt;
+        error_int = 0;
+    }
 
+    P = kp * error_curt; // calculate the contribution of P (proportional unit)
+
+    if (fabs(P) >= I_range) { // I only starts to increase when P < I_range
+        error_int = 0;
+    } else {
+        error_int += error_curt; // do integration
+        if (ki * fabs(error_int) > fabs(I_max)) {
+            error_int = sign(error_int) * I_max / ki; // avoid abs(I) > abs(I_max)
+        }
+    }
+    I = ki * error_int; // calculate the contribution of I (integral unit)
+
+    error_dev = error_curt - error_prev; // calculate error_dev
+    error_prev = error_curt; // refresh error_prev for the next calculation of error_dev
+    D = kd * error_dev; // calculate the contribution of D (derivative unit)
     
     if (abs(error_curt) <= error_tol) {  // Exit when staying in tolerated region and
                                         // maintaining a low enough speed
@@ -66,8 +86,28 @@ void PosPID::setTarget(Point p) { target_point = p; }
 void PosPID::update(Point input) {
     Vector err = target_point - input;
     error_curt = err.mod();  // calculate current error
-    //TODO: calculate the contribution of P, I, D with kp, ki, kd
+    
+    if (first_time) { // refresh error_prev and error_int for the first time
+        first_time = false;
+        error_prev = error_curt;
+        error_int = 0;
+    }
 
+    P = kp * error_curt; // calculate the contribution of P (proportional unit)
+
+    if (fabs(P) >= I_range) { // I only starts to increase when P < I_range
+        error_int = 0;
+    } else {
+        error_int += error_curt; // do integration
+        if (ki * fabs(error_int) > fabs(I_max)) {
+            error_int = sign(error_int) * I_max / ki; // avoid abs(I) > abs(I_max)
+        }
+    }
+    I = ki * error_int; // calculate the contribution of I (integral unit)
+
+    error_dev = error_curt - error_prev; // calculate error_dev
+    error_prev = error_curt; // refresh error_prev for the next calculation of error_dev
+    D = kd * error_dev; // calculate the contribution of D (derivative unit)
     
     if (abs(error_curt) <= error_tol) {  // Exit when staying in tolerated region and
                                         // maintaining a low enough speed
@@ -78,8 +118,28 @@ void PosPID::update(Point input) {
 
 void DirPID::update(double input) {
     error_curt = degNormalize(target - input);  // calculate current error
-    //TODO: calculate the contribution of P, I, D with kp, ki, kd
 
+    if (first_time) { // refresh error_prev and error_int for the first time
+        first_time = false;
+        error_prev = error_curt;
+        error_int = 0;
+    }
+
+    P = kp * error_curt; // calculate the contribution of P (proportional unit)
+
+    if (fabs(P) >= I_range) { // I only starts to increase when P < I_range
+        error_int = 0;
+    } else {
+        error_int += error_curt; // do integration
+        if (ki * fabs(error_int) > fabs(I_max)) {
+            error_int = sign(error_int) * I_max / ki; // avoid abs(I) > abs(I_max)
+        }
+    }
+    I = ki * error_int; // calculate the contribution of I (integral unit)
+
+    error_dev = error_curt - error_prev; // calculate error_dev
+    error_prev = error_curt; // refresh error_prev for the next calculation of error_dev
+    D = kd * error_dev; // calculate the contribution of D (derivative unit)
     
     if (abs(error_curt) <= error_tol) {  // Exit when staying in tolerated region and
                                         // maintaining a low enough speed
