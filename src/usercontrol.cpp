@@ -62,9 +62,9 @@ void intakerControl() {
 
 void newMotorControl() {
     const double motor_volt = 2000;
-    if (press_A) {
+    if (A && !B) {
         motor_new.spin(directionType::fwd, motor_volt, voltageUnits::mV);
-    } else if (press_B) {
+    } else if (B && !A) {
         motor_new.spin(directionType::rev, motor_volt, voltageUnits::mV);
     } else {
         motor_new.spin(directionType::fwd, 0, voltageUnits::mV);
